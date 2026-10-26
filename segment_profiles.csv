@@ -1,0 +1,5 @@
+segment,recency_days,frequency,monetary,avg_order_value,tenure_days,distinct_categories,churned,num_customers,segment_label
+0,59.0,18.0,450347.6,25430.4,666.9,4.8,0.2,711,Steady Regular
+1,200.6,4.3,71447.7,15374.5,542.5,2.6,0.7,121,At-Risk / Low-Engagement
+2,21.9,45.4,1222688.9,27549.5,701.0,5.0,0.0,308,High-Value Loyal
+3,210.6,4.1,244324.7,61270.7,529.2,2.4,0.6,47,Occasional Buyer

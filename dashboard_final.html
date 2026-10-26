@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Retail Sales & Customer Intelligence Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --card-bg: #ffffff;
+    --text: #1a2138;
+    --text-muted: #5b6478;
+    --accent: #2e4057;
+    --accent2: #4c7a95;
+    --border: #e3e7ee;
+    --shadow: 0 1px 3px rgba(20,30,60,0.08);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1420;
+      --card-bg: #171d2e;
+      --text: #e8ecf5;
+      --text-muted: #9aa4bd;
+      --accent: #7fa8c9;
+      --accent2: #5b8fae;
+      --border: #262e44;
+      --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1420;
+    --card-bg: #171d2e;
+    --text: #e8ecf5;
+    --text-muted: #9aa4bd;
+    --accent: #7fa8c9;
+    --accent2: #5b8fae;
+    --border: #262e44;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header {
+    padding: 20px 24px 8px; border-bottom: 1px solid var(--border);
+    background: var(--card-bg);
+  }
+  header h1 { margin: 0 0 4px; font-size: clamp(18px, 3vw, 24px); color: var(--accent); }
+  header p { margin: 0 0 14px; color: var(--text-muted); font-size: 14px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px; margin-bottom: 22px;
+  }
+  .kpi-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; box-shadow: var(--shadow);
+  }
+  .kpi-card .label { font-size: 12.5px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;}
+  .kpi-card .value { font-size: clamp(18px, 2.6vw, 26px); font-weight: 700; color: var(--text); }
+  .chart-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .chart-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; box-shadow: var(--shadow); overflow-x: auto;
+  }
+  .chart-card h3 { margin: 0 0 12px; font-size: 15px; color: var(--text); }
+  .chart-wrap { position: relative; height: 280px; width: 100%; min-width: 260px; }
+  footer { text-align: center; color: var(--text-muted); font-size: 12.5px; padding: 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📊 Retail Sales &amp; Customer Intelligence Dashboard</h1>
+  <p>AI/ML-Powered Retail Platform — business overview snapshot (2024–2025)</p>
+</header>
+<main>
+  <div class="kpi-grid" id="kpiGrid"></div>
+  <div class="chart-grid">
+    <div class="chart-card"><h3>Monthly Revenue Trend</h3><div class="chart-wrap"><canvas id="revenueTrend"></canvas></div></div>
+    <div class="chart-card"><h3>Revenue by Region</h3><div class="chart-wrap"><canvas id="regionChart"></canvas></div></div>
+    <div class="chart-card"><h3>Revenue by Category</h3><div class="chart-wrap"><canvas id="categoryChart"></canvas></div></div>
+    <div class="chart-card"><h3>Customer Segment Mix</h3><div class="chart-wrap"><canvas id="segmentChart"></canvas></div></div>
+  </div>
+</main>
+<footer>Retail Sales &amp; Customer Intelligence Platform — AI/ML college project · Data snapshot for demonstration</footer>
+
+<script>
+const DATA = {"kpis": {"total_revenue": 716913758.71, "total_orders": 27500, "active_customers": 1187, "churn_rate": 22.41, "avg_order_value": 26069.59}, "monthly_revenue": {"labels": ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12"], "values": [14427422.0, 16288909.0, 23363483.0, 27001544.0, 34271276.0, 32981517.0, 35991209.0, 31211588.0, 28280949.0, 34184661.0, 28869260.0, 23883907.0, 17811946.0, 21566422.0, 26029866.0, 29854619.0, 36402048.0, 38182483.0, 40683773.0, 39326920.0, 32313312.0, 41586372.0, 31571038.0, 30829235.0]}, "region_revenue": {"labels": ["North", "East", "South", "Central", "West"], "values": [190154727.0, 156846048.0, 130198036.0, 121431137.0, 118283810.0]}, "category_revenue": {"labels": ["Electronics", "Furniture", "Home & Kitchen", "Apparel", "Groceries"], "values": [356735648.0, 243259722.0, 67885719.0, 39615794.0, 9416876.0]}, "segment_mix": {"labels": ["Steady Regular", "High-Value Loyal", "At-Risk / Low-Engagement", "Occasional Buyer"], "values": [711, 308, 121, 47]}};
+
+function fmtINR(n) {
+  if (Math.abs(n) >= 1e7) return "₹" + (n/1e7).toFixed(2) + " Cr";
+  if (Math.abs(n) >= 1e5) return "₹" + (n/1e5).toFixed(2) + " L";
+  return "₹" + n.toLocaleString("en-IN");
+}
+
+const kpis = [
+  { label: "Total Revenue", value: fmtINR(DATA.kpis.total_revenue) },
+  { label: "Total Orders", value: DATA.kpis.total_orders.toLocaleString("en-IN") },
+  { label: "Active Customers", value: DATA.kpis.active_customers.toLocaleString("en-IN") },
+  { label: "Churn Rate", value: DATA.kpis.churn_rate + "%" },
+  { label: "Avg. Order Value", value: fmtINR(DATA.kpis.avg_order_value) },
+];
+const kpiGrid = document.getElementById("kpiGrid");
+kpis.forEach(k => {
+  const div = document.createElement("div");
+  div.className = "kpi-card";
+  div.innerHTML = `<div class="label">${k.label}</div><div class="value">${k.value}</div>`;
+  kpiGrid.appendChild(div);
+});
+
+const isDark = () => {
+  const attr = document.documentElement.getAttribute("data-theme");
+  if (attr === "dark") return true;
+  if (attr === "light") return false;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+};
+const gridColor = isDark() ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
+const textColor = isDark() ? "#c7cee3" : "#3a4258";
+Chart.defaults.color = textColor;
+Chart.defaults.borderColor = gridColor;
+
+new Chart(document.getElementById("revenueTrend"), {
+  type: "line",
+  data: {
+    labels: DATA.monthly_revenue.labels,
+    datasets: [{
+      label: "Revenue",
+      data: DATA.monthly_revenue.values,
+      borderColor: "#4c7a95",
+      backgroundColor: "rgba(76,122,149,0.15)",
+      fill: true, tension: 0.3, pointRadius: 2,
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { ticks: { callback: v => fmtINR(v) } } } }
+});
+
+new Chart(document.getElementById("regionChart"), {
+  type: "bar",
+  data: {
+    labels: DATA.region_revenue.labels,
+    datasets: [{ label: "Revenue", data: DATA.region_revenue.values, backgroundColor: "#3f7d5c" }]
+  },
+  options: { responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { ticks: { callback: v => fmtINR(v) } } } }
+});
+
+new Chart(document.getElementById("categoryChart"), {
+  type: "bar",
+  data: {
+    labels: DATA.category_revenue.labels,
+    datasets: [{ label: "Revenue", data: DATA.category_revenue.values, backgroundColor: "#c97a2f" }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, indexAxis: "y",
+    plugins: { legend: { display: false } },
+    scales: { x: { ticks: { callback: v => fmtINR(v) } } } }
+});
+
+new Chart(document.getElementById("segmentChart"), {
+  type: "doughnut",
+  data: {
+    labels: DATA.segment_mix.labels,
+    datasets: [{ data: DATA.segment_mix.values,
+      backgroundColor: ["#4c7a95", "#3f7d5c", "#c0533e", "#c97a2f"] }]
+  },
+  options: { responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: "bottom" } } }
+});
+</script>
+</body>
+</html>

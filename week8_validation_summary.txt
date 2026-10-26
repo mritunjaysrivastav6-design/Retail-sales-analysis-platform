@@ -1,0 +1,16 @@
+WEEK 8 - CONSOLIDATED VALIDATION SUMMARY
+============================================================
+
+Forecasting model comparison:
+                       RMSE        MAE  RMSE_%_of_avg_sales
+ARIMA (baseline)  385563.42  322504.81                38.02
+Random Forest     272586.67  221881.84                26.88
+XGBoost           287958.97  233068.40                28.40
+
+Churn model comparison:
+                     Precision  Recall     F1  ROC-AUC
+Logistic Regression      0.405   0.672  0.506    0.767
+Random Forest            0.379   0.373  0.376    0.681
+
+Churn model 5-fold CV F1 scores: [np.float64(0.553), np.float64(0.55), np.float64(0.455), np.float64(0.496), np.float64(0.571)]
+Mean F1: 0.525 | Std: 0.043

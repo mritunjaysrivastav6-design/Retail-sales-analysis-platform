@@ -1,0 +1,5 @@
+customer_id,method,recommendations
+CUST00001,collaborative_filtering,"['PROD0124', 'PROD0043', 'PROD0002', 'PROD0145', 'PROD0119']"
+CUST00002,collaborative_filtering,"['PROD0036', 'PROD0098', 'PROD0119', 'PROD0105', 'PROD0071']"
+CUST00003,collaborative_filtering,"['PROD0124', 'PROD0141', 'PROD0143', 'PROD0041', 'PROD0083']"
+CUST99999,popularity_fallback,"['PROD0022', 'PROD0028', 'PROD0051', 'PROD0143', 'PROD0066']"
